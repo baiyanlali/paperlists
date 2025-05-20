@@ -43,7 +43,7 @@ def papers_to_markdown_table(papers):
         keywords = paper.get('keywords', "")
         status = paper.get('status', '')
         rows.append(f"| {idx} | {title} | {authors} | {keywords} | {status} |")
-    return status_md + '\n' + keywords_md + '\n' + header + '\n' + '\n'.join(rows)
+    return status_md + '\n' + '\n' + header + '\n' + '\n'.join(rows)
 
 if __name__ == "__main__":
     os.makedirs("./survey", exist_ok=True)  # 创建输出目录
