@@ -31,9 +31,9 @@ def papers_to_markdown_table(papers):
     status_md = "### 录取状态统计\n"
     for k, v in status_counter.items():
         status_md += f"- {k}: {v}\n"
-    keywords_md = "### 关键词统计\n"
-    for k, v in keywords_counter.most_common():
-        keywords_md += f"- {k}: {v}\n"
+    # keywords_md = "### 关键词统计\n"
+    # for k, v in keywords_counter.most_common():
+    #     keywords_md += f"- {k}: {v}\n"
 
     header = "| 序号 | 标题 | 作者 | 关键词 | 录取状态 |\n|---|---|---|---|---|"
     rows = []
@@ -43,7 +43,7 @@ def papers_to_markdown_table(papers):
         keywords = ', '.join(paper.get('keywords', []))
         status = paper.get('status', '')
         rows.append(f"| {idx} | {title} | {authors} | {keywords} | {status} |")
-    return status_md + '\n' + keywords_md + '\n' + header + '\n' + '\n'.join(rows)
+    return status_md + '\n' + '\n' + header + '\n' + '\n'.join(rows)
 
 if __name__ == "__main__":
     os.makedirs("./survey", exist_ok=True)  # 创建输出目录
