@@ -38,3 +38,4 @@ Thumbs.db
 filtered_results-*.json 
 
 *.csv
+/survey

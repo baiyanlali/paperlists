@@ -1,6 +1,7 @@
 import json
 import re
-
+from collections import Counter
+import os
 def load_papers(json_path):
     with open(json_path, 'r', encoding='utf-8') as f:
         return json.load(f)
@@ -17,6 +18,23 @@ def search_papers(papers, query):
     return results
 
 def papers_to_markdown_table(papers):
+    # 统计 status 数量
+    status_counter = Counter()
+    keywords_counter = Counter()
+    for paper in papers:
+        status = paper.get('status', '')
+        status_counter[status] += 1
+        for kw in paper.get('keywords', []):
+            keywords_counter[kw] += 1
+
+    # 构建统计信息的 markdown
+    status_md = "### 录取状态统计\n"
+    for k, v in status_counter.items():
+        status_md += f"- {k}: {v}\n"
+    keywords_md = "### 关键词统计\n"
+    for k, v in keywords_counter.most_common():
+        keywords_md += f"- {k}: {v}\n"
+
     header = "| 序号 | 标题 | 作者 | 关键词 | 录取状态 |\n|---|---|---|---|---|"
     rows = []
     for idx, paper in enumerate(papers, 1):
@@ -25,9 +43,10 @@ def papers_to_markdown_table(papers):
         keywords = ', '.join(paper.get('keywords', []))
         status = paper.get('status', '')
         rows.append(f"| {idx} | {title} | {authors} | {keywords} | {status} |")
-    return header + '\n' + '\n'.join(rows)
+    return status_md + '\n' + keywords_md + '\n' + header + '\n' + '\n'.join(rows)
 
 if __name__ == "__main__":
+    os.makedirs("./survey", exist_ok=True)  # 创建输出目录
     # 修改为你的json文件路径
     json_path = "./iclr/iclr2025.json"
     
