@@ -17,7 +17,7 @@ def search_papers(papers, query):
             results.append(paper)
     return results
 
-def papers_to_markdown_table(papers):
+def papers_to_markdown_table(query, papers):
     # 统计 status 数量
     status_counter = Counter()
     keywords_counter = Counter()
@@ -28,21 +28,22 @@ def papers_to_markdown_table(papers):
         keywords_counter[kw] += 1
 
     # 构建统计信息的 markdown
-    status_md = "### 录取状态统计\n"
+    status_md = f"# {query} \n### 录取状态统计\n"
     for k, v in status_counter.items():
         status_md += f"- {k}: {v}\n"
     keywords_md = "### 关键词统计\n"
     for k, v in keywords_counter.most_common():
         keywords_md += f"- {k}: {v}\n"
 
-    header = "| 序号 | 标题 | 作者 | 关键词 | 录取状态 |\n|---|---|---|---|---|"
+    header = "| 序号 | 标题 | 作者 | 关键词 | 录取状态 | 摘要 |\n|---|---|---|---|---|---|"
     rows = []
     for idx, paper in enumerate(papers, 1):
         title = paper.get('title', '').replace('\n', ' ')
         authors = paper.get('author_site', "")
         keywords = paper.get('keywords', "")
         status = paper.get('status', '')
-        rows.append(f"| {idx} | {title} | {authors} | {keywords} | {status} |")
+        abstract = paper.get('abstract', '').replace("\n", "")
+        rows.append(f"| {idx} | {title} | {authors} | {keywords} | {status} | {abstract} |")
     return status_md + '\n' + '\n' + header + '\n' + '\n'.join(rows)
 
 if __name__ == "__main__":
@@ -51,7 +52,7 @@ if __name__ == "__main__":
     json_path = "./iclr/iclr2025.json"
     
     papers = load_papers(json_path)
-    queries = ["multi-modal", "content", "content generation", "generation", "procedural", "virtual reality", "mixed reality"]
+    queries = ["multi-modal", "content", "content generation", "generation", "procedural", "virtual reality", "mixed reality", "PCG"]
     for query in queries:
     # query = "multi-modal"  # 修改为你的查询关键词
         results = search_papers(papers, query)
@@ -61,7 +62,7 @@ if __name__ == "__main__":
             safe_query = query.replace(' ', '_')
             output_path = f"./survey/{safe_query}.md"
             with open(output_path, 'w', encoding='utf-8') as f:
-                f.write(papers_to_markdown_table(results))
+                f.write(papers_to_markdown_table(query, results))
             print(f"已保存结果到 {output_path}")
         else:
             print("未找到相关论文。")
